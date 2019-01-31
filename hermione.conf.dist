@@ -1,0 +1,2 @@
+[DEFAULT]
+dbpath = ~/hermione/data/hermione.json

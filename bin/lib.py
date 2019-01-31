@@ -4,10 +4,10 @@ import re
 import os
 
 def resolvepath(path):
-    if path.find('/') == 0:
-        return path
-    else:
-        return os.path.realpath('..') + '/' + path
+    path = os.path.expanduser(path)
+    if path.find('/') != 0:
+        path = os.path.realpath('..') + '/' + path
+    return path
 
 class Memory:
     def __init__(self, tags, body):
@@ -17,7 +17,7 @@ class Memory:
 class Mind:
     def __init__(self):
         config = configparser.ConfigParser()
-        config.read('../hermione.conf')
+        config.read(resolvepath('~/hermione/hermione.conf'))
         self.dbpath = resolvepath(config['DEFAULT']['dbpath'])
         self.db = TinyDB(self.dbpath)
 
