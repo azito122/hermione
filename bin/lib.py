@@ -2,6 +2,8 @@ from tinydb import TinyDB, Query
 import configparser
 import re
 import os
+import datetime
+import time
 
 def resolvepath(path):
     path = os.path.expanduser(path)
@@ -10,16 +12,42 @@ def resolvepath(path):
     return path
 
 class Memory:
-    def __init__(self, tags, body):
-        self.tags = tags
+    def __init__(self, body, tags, t):
         self.body = body
+        self.tags = tags
+        self.time = t
+
+    def get_rendered(self):
+        mtime = float(self.time)
+        t = datetime.datetime.fromtimestamp(mtime)
+        t = t.strftime("%m/%d/%Y %I:%M %p")
+        return {
+            'tags': ' '.join(self.tags),
+            'body': self.body,
+            'time': t
+        }
+
+    def render_cli(self, sepcount = 200, sepchar = '-'):
+        rendered = self.get_rendered()
+        sep = (sepchar * (sepcount//2)) + rendered['time'] + (sepchar * (sepcount//2))
+        print(sep)
+        print(rendered['tags'])
+        print("")
+        print(rendered['body'])
+
+    def from_text(self, text):
+        tagpat = r'#[a-zA-Z0-9-_]+'
+        tags = re.findall(tagpat, text)
+        body = re.sub(tagpat, '', text).strip()
+        t = time.time()
+        return Memory(body, tags, t)
 
 class Mind:
     def __init__(self):
         config = configparser.ConfigParser()
         config.read(resolvepath('~/hermione/hermione.conf'))
         self.dbpath = resolvepath(config['DEFAULT']['dbpath'])
-        self.db = TinyDB(self.dbpath)
+        self.db = TinyDB(self.dbpath, sort_keys=True, indent=4, separators=(',', ': '))
 
     def remember(self, memory):
         self.db.insert({
@@ -33,20 +61,7 @@ class Mind:
             memories = self.db.search(memory.tags.any([search]))
         else:
             memories = self.db.search(memory.body.search(search))
-        memories = [Memory(m['tags'], m['body']) for m in memories]
+        memories = [Memory(m['body'], m['tags'], (m['time'] if 'time' in m else '(no time stored)')) for m in memories]
         return memories
-
-def text_to_memory(text):
-    tagpat = r'#[a-zA-Z0-9-_]+'
-    tags = re.findall(tagpat, text)
-    body = re.sub(tagpat, '', text).strip()
-    return Memory(tags, body)
-
-def memory_to_text(memory):
-    tags = ' '.join(memory.tags)
-    text = tags
-    text += "\n\n"
-    text += memory.body
-    return text
 
 M = Mind()
