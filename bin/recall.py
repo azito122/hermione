@@ -9,5 +9,5 @@ if __name__ == '__main__':
     memories = M.recall(sys.argv[1])
     print("˅" * seplength)
     for m in memories:
-        m.render_cli()
+        print(m.render_cli())
     print("˄" * seplength)

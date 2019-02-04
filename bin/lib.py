@@ -27,13 +27,23 @@ class Memory:
             'time': t
         }
 
-    def render_cli(self, sepcount = 200, sepchar = '-'):
+    def render_cli(self, sepcount = 100, sepchar = '-'):
         rendered = self.get_rendered()
-        sep = (sepchar * (sepcount//2)) + rendered['time'] + (sepchar * (sepcount//2))
-        print(sep)
-        print(rendered['tags'])
-        print("")
-        print(rendered['body'])
+        o = ""
+        o += (sepchar * (sepcount//2)) + rendered['time'] + (sepchar * (sepcount//2))
+        o += "\n"
+        o += rendered['tags']
+        o += "\n\n"
+        o += rendered['body']
+        return o
+
+    def render_vim(self):
+        r = self.get_rendered()
+        o = ""
+        o += r['tags']
+        o += "\n\n"
+        o += r['body']
+        return o
 
     def from_text(self, text):
         tagpat = r'#[a-zA-Z0-9-_]+'
