@@ -64,7 +64,8 @@ class Mind:
     def remember(self, memory):
         self.db.insert({
             'tags': memory.tags,
-            'body': memory.body
+            'body': memory.body,
+            'time': memory.time
         })
 
     def recall(self, search):
@@ -73,7 +74,7 @@ class Mind:
             memories = self.db.search(memory.tags.any([search]))
         else:
             memories = self.db.search(memory.body.search(search))
-        memories = [Memory(m['body'], m['tags'], (m['time'] if 'time' in m else '(no time stored)')) for m in memories]
+        memories = [Memory(m['body'], m['tags'], m['time']) for m in memories]
         return memories
 
 M = Mind()
