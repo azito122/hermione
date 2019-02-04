@@ -13,6 +13,7 @@ def resolvepath(path):
 
 class Memory:
     def __init__(self, data):
+        self.id   = data['id']
         self.body = data['body']
         self.tags = data['tags']
         self.time = data['time']
@@ -24,15 +25,20 @@ class Memory:
         return {
             'tags': ' '.join(self.tags),
             'body': self.body,
-            'time': t
+            'time': t,
+            'id': self.id,
         }
 
     def render_cli(self, sepcount = 100, sepchar = '-'):
+        idcolor = '\033[1;33m'
+        nocolor = '\033[0m'
         rendered = self.get_rendered()
         o = ""
-        t = rendered['time']
-        sepcount = sepcount - len(t)
-        o += (sepchar * (sepcount//2)) + rendered['time'] + (sepchar * (sepcount//2))
+        t = str(rendered['time'])
+        id = str(rendered['id'])
+        mid = '( \033[0;31m' + idcolor + id + nocolor + ' | ' + t + ' )'
+        sepcount = sepcount - len(mid)
+        o += (sepchar * (sepcount//2)) + mid + (sepchar * (sepcount//2))
         o += "\n"
         o += rendered['tags']
         o += "\n\n"
@@ -78,7 +84,9 @@ class Mind:
         memories = [Memory({
             'body': m['body'],
             'tags': m['tags'],
-            'time': m['time']}) for m in memories]
+            'time': m['time'],
+            'id': m.doc_id}
+        ) for m in memories]
         return memories
 
 M = Mind()
