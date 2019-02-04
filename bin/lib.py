@@ -13,7 +13,7 @@ def resolvepath(path):
 
 class Memory:
     def __init__(self, data):
-        self.id   = data['id']
+        self.id   = data['id'] if 'id' in data else None
         self.body = data['body']
         self.tags = data['tags']
         self.time = data['time']
@@ -69,10 +69,29 @@ class Mind:
         self.db = TinyDB(self.dbpath, sort_keys=True, indent=4, separators=(',', ': '))
 
     def remember(self, memory):
-        self.db.insert({
-            'tags': memory.tags,
-            'body': memory.body,
-            'time': memory.time
+        if memory.id is not None:
+            print(memory.id)
+            Q = Query()
+            self.db.update({
+                'tags': memory.tags,
+                'body': memory.body,
+                # 'time': memory.time,
+            }, None, [int(memory.id)])
+        else:
+            self.db.insert({
+                'tags': memory.tags,
+                'body': memory.body,
+                'time': memory.time
+            })
+
+    def recall_by_id(self, id):
+        M = Query()
+        mem = self.db.get(M, id)
+        return Memory({
+            'body': mem['body'],
+            'tags': mem['tags'],
+            'time': mem['time'],
+            'id': mem.doc_id
         })
 
     def recall(self, search):

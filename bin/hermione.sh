@@ -26,4 +26,13 @@ then
         echo "recalling..."
         python3 $HERE/recall.py "$V"
     fi
+elif [[ "$C" =~ ^(edit|e)$ ]];
+then
+    ID=$(python3 $HERE/edit.py "$V")
+    vim /tmp/hermione
+    MEM=$(cat /tmp/hermione)
+    bash $HERE/hermione.sh reremember "$MEM" "$ID"
+elif [[ "$C" =~ ^(reremember|rr)$ ]];
+then
+    python3 $HERE/remember.py "$V" "$T"
 fi
