@@ -30,6 +30,8 @@ class Memory:
     def render_cli(self, sepcount = 100, sepchar = '-'):
         rendered = self.get_rendered()
         o = ""
+        t = rendered['time']
+        sepcount = sepcount - len(t)
         o += (sepchar * (sepcount//2)) + rendered['time'] + (sepchar * (sepcount//2))
         o += "\n"
         o += rendered['tags']

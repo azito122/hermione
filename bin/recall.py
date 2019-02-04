@@ -10,4 +10,5 @@ if __name__ == '__main__':
     print("˅" * seplength)
     for m in memories:
         print(m.render_cli())
+        print('')
     print("˄" * seplength)
