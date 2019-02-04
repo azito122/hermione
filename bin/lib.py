@@ -12,10 +12,10 @@ def resolvepath(path):
     return path
 
 class Memory:
-    def __init__(self, body, tags, t):
-        self.body = body
-        self.tags = tags
-        self.time = t
+    def __init__(self, data):
+        self.body = data['body']
+        self.tags = data['tags']
+        self.time = data['time']
 
     def get_rendered(self):
         mtime = float(self.time)
@@ -49,10 +49,11 @@ class Memory:
 
     def from_text(self, text):
         tagpat = r'#[a-zA-Z0-9-_]+'
-        tags = re.findall(tagpat, text)
-        body = re.sub(tagpat, '', text).strip()
-        t = time.time()
-        return Memory(body, tags, t)
+        return Memory({
+            'body': re.sub(tagpat, '', text).strip(),
+            'tags': re.findall(tagpat, text),
+            'time': time.time()
+        })
 
 class Mind:
     def __init__(self):
@@ -74,7 +75,10 @@ class Mind:
             memories = self.db.search(memory.tags.any([search]))
         else:
             memories = self.db.search(memory.body.search(search))
-        memories = [Memory(m['body'], m['tags'], m['time']) for m in memories]
+        memories = [Memory({
+            'body': m['body'],
+            'tags': m['tags'],
+            'time': m['time']}) for m in memories]
         return memories
 
 M = Mind()
