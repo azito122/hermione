@@ -32,7 +32,11 @@ then
     vim /tmp/hermione
     MEM=$(cat /tmp/hermione)
     bash $HERE/hermione.sh reremember "$MEM" "$ID"
-elif [[ "$C" =~ ^(reremember|rr)$ ]];
+# elif [[ "$C" =~ ^(reremember|rr)$ ]];
+# then
+#     python3 $HERE/remember.py "$V" "$T"
+elif [[ "$C" =~ ^(delete|d|forget|fg) ]];
 then
-    python3 $HERE/remember.py "$V" "$T"
+    python3 $HERE/forget.py "$2"
+    echo "memory #$2 is forgotten"
 fi

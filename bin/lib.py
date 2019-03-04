@@ -68,6 +68,10 @@ class Mind:
         self.dbpath = resolvepath(config['DEFAULT']['dbpath'])
         self.db = TinyDB(self.dbpath, sort_keys=True, indent=4, separators=(',', ': '))
 
+    def forget(self, id):
+        if isinstance(id, int):
+            self.db.remove(doc_ids=[id])
+
     def remember(self, memory):
         if memory.id is not None:
             print(memory.id)
